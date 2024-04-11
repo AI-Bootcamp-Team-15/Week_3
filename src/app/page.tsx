@@ -38,6 +38,8 @@ const ImageSelectionPage = () => {
   const { messages, append, isLoading } = useChat();
   const [imageIsLoading, setImageIsLoading] = useState(false);
   const [image, setImage] = useState<string | null>(null);
+  const [message, setMessage] = useState(''); // Initialize state variable
+  const [enhancedDescription, setEnhancedDescription] = useState(''); // Initialize state variable for enhanced description from server
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +56,13 @@ const ImageSelectionPage = () => {
     { id: 2, src: image2 },
     { id: 3, src: image3 },
   ];
+
+  // Mapping of image IDs to themes
+  const themes = {
+    1: 'forest',
+    2: 'mountains',
+    3: 'beach',
+  };
 
   const handleImageSelect = (event) => {
     setSelectedImage(+event.target.value);
@@ -80,6 +89,27 @@ const ImageSelectionPage = () => {
           />
         </div>
       ))}
+      <div>
+        <form>
+          <input
+            type = "text"
+            placeholder = "Enter your message"
+            className = "text-black"
+            value={message} // Bind the input field to the state variable
+            onChange = {e => setMessage(e.target.value)} // Update state variable on change
+          />
+        </form>
+      </div>
+      <div>
+        <form>
+          <textarea
+            readOnly
+            placeholder = "Enhanced description will appear here"
+            className = "text-black"
+            value={enhancedDescription} // Bind the textarea to the state variable
+          />
+        </form>
+      </div>
       <button
         className="bg-blue-500 p-2 text-white rounded shadow-xl"
         disabled={isLoading}
@@ -91,11 +121,13 @@ const ImageSelectionPage = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              message: "dog"//messages[messages.length - 1].content,
+              message: message, // Use the state variable here
+              theme: themes[selectedImage], // Use the selected theme here
             }),
           });
           const data = await response.json();
-          setImage(data);
+          setImage(data.image);
+          setEnhancedDescription(data.description); // Update the enhanced description
           setImageIsLoading(false);
         }}
       >
