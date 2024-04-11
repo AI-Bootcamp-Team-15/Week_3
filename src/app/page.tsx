@@ -38,6 +38,7 @@ const ImageSelectionPage = () => {
   const { messages, append, isLoading } = useChat();
   const [imageIsLoading, setImageIsLoading] = useState(false);
   const [image, setImage] = useState<string | null>(null);
+  const [message, setMessage] = useState(''); // Initialize state variable
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -80,6 +81,17 @@ const ImageSelectionPage = () => {
           />
         </div>
       ))}
+      <div>
+        <form>
+          <input
+            type = "text"
+            placeholder = "Enter your message"
+            className = "text-black"
+            value={message} // Bind the input field to the state variable
+            onChange = {e => setMessage(e.target.value)} // Update state variable on change
+          />
+        </form>
+      </div>
       <button
         className="bg-blue-500 p-2 text-white rounded shadow-xl"
         disabled={isLoading}
@@ -91,7 +103,7 @@ const ImageSelectionPage = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              message: "dog"//messages[messages.length - 1].content,
+              message: message, // Use the state variable here
             }),
           });
           const data = await response.json();
