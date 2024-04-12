@@ -39,6 +39,8 @@ const ImageSelectionPage = () => {
   const [imageIsLoading, setImageIsLoading] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [message, setMessage] = useState(''); // Initialize state variable
+  const [enhancedDescription, setEnhancedDescription] = useState(''); // Initialize state variable for enhanced description from server
+
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -51,18 +53,21 @@ const ImageSelectionPage = () => {
 
   const [selectedImage, setSelectedImage] = useState(1);
   const images = [
-    { id: 1, src: image1 },
-    { id: 2, src: image2 },
-    { id: 3, src: image3 },
+    { id: 0, src: image1 },
+    { id: 1, src: image2 },
+    { id: 2, src: image3 },
   ];
 
-  const handleImageSelect = (event) => {
+  // Mapping of image IDs to themes
+  const themes: string[] = ['forest','mountains','beach'];
+
+  const handleImageSelect = (event: any) => {
     setSelectedImage(+event.target.value);
   };
 
   return (
     <div>
-      <h1>Select an theme with the radio button</h1>
+      <h1>Select a theme with the radio button</h1>
       <br />
       {images.map((image) => (
         <div key={image.id}>
@@ -83,12 +88,27 @@ const ImageSelectionPage = () => {
       ))}
       <div>
         <form>
+          <label htmlFor="message">Enter a short description of your image:</label>
+          <br></br>
           <input
             type = "text"
             placeholder = "Enter your message"
             className = "text-black"
             value={message} // Bind the input field to the state variable
             onChange = {e => setMessage(e.target.value)} // Update state variable on change
+          />
+        </form>
+      </div>
+      <br></br>
+      <div>
+        <form>
+          <label htmlFor="enhancedDescription">Your enahnced prompt for image generation:</label>
+          <br></br>
+          <textarea
+            readOnly
+            placeholder = "Enhanced description will appear here"
+            className = "text-black h-48 w-96"
+            value={enhancedDescription} // Bind the textarea to the state variable
           />
         </form>
       </div>
@@ -104,10 +124,12 @@ const ImageSelectionPage = () => {
             },
             body: JSON.stringify({
               message: message, // Use the state variable here
+              theme: themes[selectedImage], // Use the selected theme here
             }),
           });
           const data = await response.json();
-          setImage(data);
+          setImage(data.image);
+          setEnhancedDescription(data.description); // Update the enhanced description
           setImageIsLoading(false);
         }}
       >
