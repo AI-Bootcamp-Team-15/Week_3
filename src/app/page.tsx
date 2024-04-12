@@ -52,25 +52,21 @@ const ImageSelectionPage = () => {
 
   const [selectedImage, setSelectedImage] = useState(1);
   const images = [
-    { id: 1, src: image1 },
-    { id: 2, src: image2 },
-    { id: 3, src: image3 },
+    { id: 0, src: image1 },
+    { id: 1, src: image2 },
+    { id: 2, src: image3 },
   ];
 
   // Mapping of image IDs to themes
-  const themes = {
-    1: 'forest',
-    2: 'mountains',
-    3: 'beach',
-  };
+  const themes: string[] = ['forest','mountains','beach'];
 
-  const handleImageSelect = (event) => {
+  const handleImageSelect = (event: any) => {
     setSelectedImage(+event.target.value);
   };
 
   return (
     <div>
-      <h1>Select an theme with the radio button</h1>
+      <h1>Select a theme with the radio button</h1>
       <br />
       {images.map((image) => (
         <div key={image.id}>
@@ -91,6 +87,8 @@ const ImageSelectionPage = () => {
       ))}
       <div>
         <form>
+          <label htmlFor="message">Enter a short description of your image:</label>
+          <br></br>
           <input
             type = "text"
             placeholder = "Enter your message"
@@ -100,12 +98,15 @@ const ImageSelectionPage = () => {
           />
         </form>
       </div>
+      <br></br>
       <div>
         <form>
+          <label htmlFor="enhancedDescription">Your enahnced prompt for image generation:</label>
+          <br></br>
           <textarea
             readOnly
             placeholder = "Enhanced description will appear here"
-            className = "text-black"
+            className = "text-black h-48 w-96"
             value={enhancedDescription} // Bind the textarea to the state variable
           />
         </form>

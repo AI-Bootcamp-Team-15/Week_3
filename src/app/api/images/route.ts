@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const { message, theme } = await req.json(); // Receive the user's message and theme
 
   // Create a prompt that incorporates the user's message and the theme
-  const initialPrompt = `${message} ${theme}`;
+  const initialPrompt = `${message} with the theme of ${theme}`;
 
   // Send the prompt to the OpenAI text completion API to get an enhanced description
   const completionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant."
+          content: "You are going to be given a short image description and a theme. Please enhance it to make it more detailed and engineer a prompt for the DAL E image generation model. The answer you give will be directly fed to DAL E so you cannot interact with the user further e.g. asking questions."
         },
         {
           role: "user",
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   // Use the enhanced description as the prompt for the DAL E image generation API
   const enhancedPrompt = completionData['choices'][0]['message']['content'];
 
-  const response = await fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
+  const response = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
