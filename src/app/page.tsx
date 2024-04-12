@@ -41,6 +41,7 @@ const ImageSelectionPage = () => {
   const [message, setMessage] = useState(''); // Initialize state variable
   const [enhancedDescription, setEnhancedDescription] = useState(''); // Initialize state variable for enhanced description from server
 
+
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
