@@ -40,6 +40,8 @@ const ImageSelectionPage = () => {
   const [image, setImage] = useState<string | null>(null);
   const [message, setMessage] = useState(''); // Initialize state variable
   const [enhancedDescription, setEnhancedDescription] = useState(''); // Initialize state variable for enhanced description from server
+  // const [messageStream, setMessageStream] = useState([])
+  let messageStream: string[] = [];
 
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -66,34 +68,15 @@ const ImageSelectionPage = () => {
   };
 
   return (
-    <div>
-      <h1>Select a theme with the radio button</h1>
-      <br />
-      {images.map((image) => (
-        <div key={image.id}>
-          <Image
-            src={image.src}
-            alt={`Image ${image.id}`}
-            width={400}
-            height={300}
-          />
-          <input
-            type="radio"
-            name="selectedImage"
-            value={image.id}
-            checked={selectedImage === image.id}
-            onChange={handleImageSelect}
-          />
-        </div>
-      ))}
+    <div className="p-12 text-center bg-neutral-800 m-24 rounded-xl">
       <div>
         <form>
-          <label htmlFor="message">Enter a short description of your image:</label>
+          <label htmlFor="message" className="text-xl">Enter the action you would like to take:</label>
           <br></br>
           <input
             type = "text"
-            placeholder = "Enter your message"
-            className = "text-black"
+            placeholder = "Enter action"
+            className = "text-black text-xl p-3 m-3 rounded-lg"
             value={message} // Bind the input field to the state variable
             onChange = {e => setMessage(e.target.value)} // Update state variable on change
           />
@@ -102,18 +85,19 @@ const ImageSelectionPage = () => {
       <br></br>
       <div>
         <form>
-          <label htmlFor="enhancedDescription">Your enahnced prompt for image generation:</label>
+          <label htmlFor="enhancedDescription" className="text-xl">Message from your Game Master:</label>
           <br></br>
           <textarea
             readOnly
-            placeholder = "Enhanced description will appear here"
-            className = "text-black h-48 w-96"
+            placeholder = "Storyline and choices will appear here"
+            className = "text-black h-48 w-3/4 text-xl p-3 m-3 rounded-lg"
             value={enhancedDescription} // Bind the textarea to the state variable
           />
         </form>
       </div>
+      <br></br>
       <button
-        className="bg-blue-500 p-2 text-white rounded shadow-xl"
+        className="bg-blue-500 p-2 text-white rounded shadow-xl text-xl"
         disabled={isLoading}
         onClick={async () => {
           setImageIsLoading(true)
@@ -123,17 +107,17 @@ const ImageSelectionPage = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              message: message, // Use the state variable here
-              theme: themes[selectedImage], // Use the selected theme here
+              message: messageStream.join("\n\n") + "\n\nAssume the above already happened - generate the next part of the story from here onwards.", // Use the state variable here
             }),
           });
           const data = await response.json();
+          messageStream.push(data.description);
           setImage(data.image);
           setEnhancedDescription(data.description); // Update the enhanced description
           setImageIsLoading(false);
         }}
       >
-        Generate image
+        Proceed
       </button>
       <div
         hidden={
